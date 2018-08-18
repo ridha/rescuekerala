@@ -4,7 +4,7 @@
 
 {% block content %}  
   <div class="text-right">
-    <a href="/find_people">Search</a> | 
+    <a href="/coordinator_home">Coordinator Home</a> | 
     <a href="/logout">Logout</a>
   </div>
 
@@ -35,5 +35,12 @@
         ബന്ധുക്കൾക്ക് ഇവരെ കണ്ടെത്തുന്നതിന് ഇത് സഹായിക്കും
     </p>
   </form> 
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+  $('#id_gender_0').parents('.radio').hide();
+  $('#id_gender > .radio').removeClass('radio').addClass('radio-inline');
+  $('#id_camped_at').attr('readonly', true);
+  </script>
 
 {% endblock %}
