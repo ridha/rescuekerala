@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
+from .validators import validate_phonenumber
+
 
 districts = (
     ('alp','Alappuzha - ആലപ്പുഴ'),
@@ -67,7 +69,9 @@ class Request(models.Model):
     )
     location = models.CharField(max_length=500,verbose_name='Location - സ്ഥലം')
     requestee = models.CharField(max_length=100,verbose_name='Requestee - അപേക്ഷകന്‍റെ പേര്')
-    requestee_phone = models.CharField(max_length=10,verbose_name='Requestee Phone - അപേക്ഷകന്‍റെ ഫോണ്‍ നമ്പര്‍')
+    requestee_phone = models.CharField(max_length=10,
+                                       validators=[validate_phonenumber],
+                                       verbose_name='Requestee Phone - അപേക്ഷകന്‍റെ ഫോണ്‍ നമ്പര്‍')
     latlng = models.CharField(max_length=100, verbose_name='GPS Coordinates - GPS നിർദ്ദേശാങ്കങ്ങൾ ', blank=True)
     latlng_accuracy = models.CharField(max_length=100, verbose_name='GPS Accuracy - GPS കൃത്യത ', blank=True)
     #  If it is enabled no need to consider lat and lng
@@ -128,7 +132,8 @@ class Volunteer(models.Model):
         verbose_name="District - ജില്ല"
     )
     name = models.CharField(max_length=100, verbose_name="Name - പേര്")
-    phone = models.CharField(max_length=10, verbose_name="Phone - ഫോണ്‍ നമ്പര്‍")
+    phone = models.CharField(max_length=10, validators=[validate_phonenumber],
+                             verbose_name="Phone - ഫോണ്‍ നമ്പര്‍")
     organisation = models.CharField(max_length=250, verbose_name="Organization (സംഘടന) / Institution")
     address = models.TextField(verbose_name="Address - വിലാസം")
     area = models.CharField(
@@ -177,7 +182,7 @@ class Contributor(models.Model):
         verbose_name="District - ജില്ല"
     )
     name = models.CharField(max_length=100, verbose_name="Name - പേര്")
-    phone = models.CharField(max_length=10, verbose_name="Phone - ഫോണ്‍ നമ്പര്‍")
+    phone = models.CharField(max_length=10, verbose_name="Phone - ഫോണ്‍ നമ്പര്‍", validators=[validate_phonenumber])
     address = models.TextField(verbose_name="Address - വിലാസം")
     commodities = models.TextField(verbose_name="What you can contribute. ( സംഭാവന ചെയ്യാന്‍ ഉദ്ദേശിക്കുന്ന സാധനങ്ങള്‍ ) -- Eg: Shirts, torches etc ")
     status = models.CharField(
@@ -197,7 +202,7 @@ class DistrictManager(models.Model):
         verbose_name="District - ജില്ല"
     )
     name = models.CharField(max_length=100, verbose_name="Name - പേര്")
-    phone = models.CharField(max_length=11, verbose_name="Phone - ഫോണ്‍ നമ്പര്‍")
+    phone = models.CharField(max_length=11, verbose_name="Phone - ഫോണ്‍ നമ്പര്‍", validators=[validate_phonenumber])
     email = models.CharField(max_length=100, verbose_name="Email - ഇമെയിൽ")
 
     def __str__(self):
@@ -234,11 +239,12 @@ class RescueCamp(models.Model):
     )
     taluk = models.CharField(max_length=50,verbose_name="Taluk - താലൂക്ക്")
     village = models.CharField(max_length=50,verbose_name="Village - വില്ലജ്")
-    contacts = models.TextField(verbose_name="Phone Numbers - ഫോൺ നമ്പറുകൾ",blank=True,null=True)
+    contacts = models.TextField(verbose_name="Phone Numbers - ഫോൺ നമ്പറുകൾ", validators=[validate_phonenumber],
+                                blank=True, null=True)
     data_entry_user = models.ForeignKey(User,models.SET_NULL,blank=True,null=True,help_text="This camp's coordinator page will be visible only to this user")
     map_link = models.CharField(max_length=250, verbose_name='Map link',blank=True,null=True,help_text="Copy and paste the full Google Maps link")
     latlng = models.CharField(max_length=100, verbose_name='GPS Coordinates', blank=True,help_text="Comma separated latlng field. Leave blank if you don't know it")
-    
+
     total_males = models.IntegerField(null=True,blank=True,verbose_name="Number of Males")
     total_females = models.IntegerField(null=True,blank=True,verbose_name="Number of Females")
     total_infants = models.IntegerField(null=True,blank=True,verbose_name="Number of Infants (<2y)")
@@ -257,7 +263,9 @@ class RescueCamp(models.Model):
 
 class Person(models.Model):
     name = models.CharField(max_length=30,blank=False,null=False,verbose_name="Name - പേര്")
-    phone = models.CharField(max_length=11,null=True,blank=True,verbose_name='Mobile - മൊബൈൽ')
+    phone = models.CharField(max_length=11, null=True,
+                             validators=[validate_phonenumber], blank=True,
+                             verbose_name='Mobile - മൊബൈൽ')
     age = models.IntegerField(null=True,blank=True,verbose_name="Age - പ്രായം")
     gender = models.IntegerField(
         choices = gender,
